@@ -5,13 +5,13 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FavoriteQuoteDao {
 
-
     @Query("SELECT * FROM fav_quote")
-    suspend fun getFavQuote(): List<FavoriteQuoteEntity>
+    fun getFavQuote(): Flow<List<FavoriteQuoteEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFav(fav: FavoriteQuoteEntity): Long?

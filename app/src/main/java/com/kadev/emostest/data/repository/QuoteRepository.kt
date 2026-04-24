@@ -6,6 +6,8 @@ import com.kadev.emostest.data.mapper.toEntity
 import com.kadev.emostest.data.remote.ApiService
 import com.kadev.emostest.data.remote.safeApiCall
 import com.kadev.emostest.domain.model.QuoteOfTheDay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class QuoteRepository(
     val apiService: ApiService,
@@ -19,9 +21,8 @@ class QuoteRepository(
         return quoteDao.insertFav(quoteOfTheDay.toEntity())
     }
 
-    suspend fun getAllFavorite(): List<QuoteOfTheDay>{
-        return quoteDao.getFavQuote().map { it.toDomain() }
-    }
+    fun getAllFavorite(): Flow<List<QuoteOfTheDay>> =
+        quoteDao.getFavQuote().map { list -> list.map { it.toDomain() } }
 
     suspend fun deleteFav(quoteOfTheDay: QuoteOfTheDay): Int?{
         return quoteDao.deleteFav(quoteOfTheDay.toEntity())
