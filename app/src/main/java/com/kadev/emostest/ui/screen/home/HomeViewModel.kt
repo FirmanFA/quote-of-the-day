@@ -30,8 +30,8 @@ class HomeViewModel(
     private val _uiState = MutableStateFlow<QOTDUiState>(QOTDUiState.Loading)
     val uiState: StateFlow<QOTDUiState> = _uiState.asStateFlow()
 
-    private val _saveFavUiState = MutableStateFlow<SaveFavUiState>(SaveFavUiState.Loading)
-    val saveFavUiState: StateFlow<SaveFavUiState> = _saveFavUiState.asStateFlow()
+    private val _saveFavUiState = MutableStateFlow<SaveFavUiState?>(null)
+    val saveFavUiState: StateFlow<SaveFavUiState?> = _saveFavUiState.asStateFlow()
 
 
     fun loadQOTD() {
@@ -44,18 +44,16 @@ class HomeViewModel(
         }
     }
 
-    fun addQuoteToFavorite(quoteOfTheDay: QuoteOfTheDay){
+    fun addQuoteToFavorite(quoteOfTheDay: QuoteOfTheDay) {
         viewModelScope.launch {
-            _saveFavUiState.value = SaveFavUiState.Loading
             val inserted = repository.insertQuoteToFavorite(quoteOfTheDay)
-
-            if(inserted == null){
-                _saveFavUiState.value = SaveFavUiState.Error("Error")
-            }else{
-                _saveFavUiState.value = SaveFavUiState.Success(inserted)
-            }
-
+            _saveFavUiState.value = if (inserted != null) SaveFavUiState.Success(inserted)
+                                    else SaveFavUiState.Error("Error")
         }
+    }
+
+    fun consumeSaveState() {
+        _saveFavUiState.value = null
     }
 
 

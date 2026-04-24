@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Refresh
@@ -68,9 +69,11 @@ fun HomeScreen(
         when (saveState) {
             is SaveFavUiState.Success -> {
                 snackbarHostState.showSnackbar("Added to favorites!")
+                viewModel.consumeSaveState()
             }
             is SaveFavUiState.Error -> {
                 snackbarHostState.showSnackbar("Failed to add to favorites.")
+                viewModel.consumeSaveState()
             }
             else -> {}
         }
@@ -85,13 +88,10 @@ fun HomeScreen(
                         style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                     )
                 },
-                actions = {
-                    IconButton(onClick = onNavigateToFav) {
-                        Icon(Icons.Default.List, contentDescription = "View Favorites")
-                    }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
+                    scrolledContainerColor = Color.Unspecified,
+                    navigationIconContentColor = Color.Unspecified,
                     titleContentColor = MaterialTheme.colorScheme.onPrimary,
                     actionIconContentColor = MaterialTheme.colorScheme.onPrimary
                 )
@@ -135,13 +135,6 @@ fun HomeScreen(
                                     .fillMaxWidth(),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Text(
-                                    "\"",
-                                    fontSize = 48.sp,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.align(Alignment.Start)
-                                )
 
                                 Text(
                                     quote.quote,
@@ -215,11 +208,15 @@ fun HomeScreen(
 
                 Spacer(Modifier.weight(1.5F))
 
-                if (saveState is SaveFavUiState.Loading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        strokeWidth = 2.dp
-                    )
+                Button(
+                    onClick = onNavigateToFav,
+                    shape = MaterialTheme.shapes.medium,
+                    contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp)
+                ) {
+                    Icon(Icons.Default.Bookmark, contentDescription = null)
+                    Spacer(Modifier.width(8.dp))
+                    Text("View Favorites")
                 }
 
                 Spacer(Modifier.height(24.dp))
